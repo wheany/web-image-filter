@@ -19,25 +19,31 @@ import com.vaadin.ui.Button.ClickEvent;
 @Widgetset("com.wheany.MyAppWidgetset")
 public class MyUI extends UI {
 
+    private String getFilename() {
+        return "generatedImageTest-" + System.currentTimeMillis() + ".png";
+    }
+
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
         setContent(layout);
 
-        Button button = new Button("Click Me");
+        // Create an instance of our stream source.
+        final StreamResource.StreamSource imagesource = new ImageResource();
+        final StreamResource resource = new StreamResource(imagesource, getFilename());
+        final Image image = new Image("Dynamic image", resource);
+        layout.addComponent(image);
+
+        Button button = new Button("Reload image");
         button.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                layout.addComponent(new Label("Thank you for clicking"));
+                image.markAsDirty();
+                resource.setFilename(getFilename());
             }
         });
         layout.addComponent(button);
-
-        // Create an instance of our stream source.
-        StreamResource.StreamSource imagesource = new ImageResource();
-        StreamResource resource = new StreamResource(imagesource, "generatedImageTest.png");
-        layout.addComponent(new Image("Image title", resource));
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
