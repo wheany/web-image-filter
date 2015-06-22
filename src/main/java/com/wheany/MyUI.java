@@ -5,11 +5,11 @@ import javax.servlet.annotation.WebServlet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.*;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
+
+import java.io.File;
 
 
 /**
@@ -44,6 +44,17 @@ public class MyUI extends UI {
             }
         });
         layout.addComponent(button);
+
+        // Find the application directory
+        String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+
+        // Image as a file resource
+        FileResource fileResource = new FileResource(new File(basepath + "/test_image.jpg"));
+
+        // Show the image in the application
+        Image fileImage = new Image("Image from file", fileResource);
+
+        layout.addComponent(fileImage);
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
