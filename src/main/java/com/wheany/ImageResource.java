@@ -5,15 +5,22 @@ import com.vaadin.server.StreamResource;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.*;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 public class ImageResource
         implements StreamResource.StreamSource {
-    ByteArrayOutputStream imagebuffer = null;
     int reloads = 0;
+
+    BufferedImage myImg;
+
+    public ImageResource(File input) throws IOException {
+        BufferedImage in = ImageIO.read(input);
+
+        myImg = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = myImg.createGraphics();
+        g.drawImage(in, 0, 0, null);
+        g.dispose();
+    }
 
     public double getValue() {
         return value;
@@ -29,9 +36,9 @@ public class ImageResource
      * the resource as a stream. */
     public InputStream getStream () {
         /* Create an image and draw something on it. */
-        BufferedImage image = new BufferedImage (200, 200,
-                BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage (myImg.getWidth(), myImg.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics drawable = image.getGraphics();
+        drawable.drawImage(myImg, 0, 0, null);
         drawable.setColor(Color.lightGray);
         drawable.fillRect(0,0,200,200);
         drawable.setColor(Color.yellow);
@@ -45,7 +52,7 @@ public class ImageResource
 
         try {
             /* Write the image to a buffer. */
-            imagebuffer = new ByteArrayOutputStream();
+            ByteArrayOutputStream imagebuffer = new ByteArrayOutputStream();
             ImageIO.write(image, "png", imagebuffer);
 
             /* Return a stream from the buffer. */

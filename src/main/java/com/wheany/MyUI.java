@@ -11,6 +11,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 
 import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -30,8 +31,25 @@ public class MyUI extends UI {
         layout.setMargin(true);
         setContent(layout);
 
+        // Find the application directory
+        String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+
+        // Image as a file resource
+        FileResource fileResource = new FileResource(new File(basepath + "/test_image.jpg"));
+
+        // Show the image in the application
+        Image fileImage = new Image("Original image", fileResource);
+
+        layout.addComponent(fileImage);
+
         // Create an instance of our stream source.
-        final ImageResource imageResource = new ImageResource();
+        final ImageResource imageResource;
+        try {
+            imageResource = new ImageResource(new File(basepath + "/test_image.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
 
         final StreamResource resource = new StreamResource(imageResource, getFilename());
         final Image image = new Image("Dynamic image", resource);
@@ -61,17 +79,6 @@ public class MyUI extends UI {
             }
         );
         layout.addComponent(slider);
-
-        // Find the application directory
-        String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-
-        // Image as a file resource
-        FileResource fileResource = new FileResource(new File(basepath + "/test_image.jpg"));
-
-        // Show the image in the application
-        Image fileImage = new Image("Image from file", fileResource);
-
-        layout.addComponent(fileImage);
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
