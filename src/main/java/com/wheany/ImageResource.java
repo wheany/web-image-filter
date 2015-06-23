@@ -11,10 +11,32 @@ import static java.lang.Math.*;
 
 public class ImageResource
         implements StreamResource.StreamSource {
-    int reloads = 0;
-
     BufferedImage original;
     BufferedImage adjusted;
+
+    public int getRAdjust() {
+        return RAdjust;
+    }
+
+    public void setRAdjust(int RAdjust) {
+        this.RAdjust = RAdjust;
+    }
+
+    public int getGAdjust() {
+        return GAdjust;
+    }
+
+    public void setGAdjust(int GAdjust) {
+        this.GAdjust = GAdjust;
+    }
+
+    public int getBAdjust() {
+        return BAdjust;
+    }
+
+    public void setBAdjust(int BAdjust) {
+        this.BAdjust = BAdjust;
+    }
 
     private int RAdjust = 0;
     private int GAdjust = 0;
@@ -69,19 +91,10 @@ public class ImageResource
      * the resource as a stream. */
     public InputStream getStream () {
         /* Create an image and draw something on it. */
+        updateAdjusted();
         BufferedImage image = new BufferedImage (adjusted.getWidth(), adjusted.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics drawable = image.getGraphics();
         drawable.drawImage(adjusted, 0, 0, null);
-        drawable.setColor(Color.lightGray);
-        drawable.fillRect(0,0,200,200);
-        drawable.setColor(Color.yellow);
-        drawable.fillOval(25,25,150,150);
-        drawable.setColor(Color.blue);
-        drawable.drawRect(0,0,199,199);
-        drawable.setColor(Color.black);
-        drawable.drawString("Reloads="+reloads, 75, 100);
-        drawable.drawString("Value="+value, 75, 125);
-        reloads++;
 
         try {
             /* Write the image to a buffer. */

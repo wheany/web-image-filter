@@ -52,33 +52,60 @@ public class MyUI extends UI {
         }
 
         final StreamResource resource = new StreamResource(imageResource, getFilename());
-        final Image image = new Image("Dynamic image", resource);
-        layout.addComponent(image);
+        final Image image = new Image("Adjusted image", resource);
 
-        Button button = new Button("Reload image");
-        button.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                image.markAsDirty();
-                resource.setFilename(getFilename());
-            }
-        });
-        layout.addComponent(button);
+        final Slider RSlider = new Slider("Adjust R", -255, 255);
+        final Slider GSlider = new Slider("Adjust G", -255, 255);
+        final Slider BSlider = new Slider("Adjust B", -255, 255);
 
-        final Slider slider = new Slider(1, 100);
-        slider.addValueChangeListener(
+        RSlider.addValueChangeListener(
             new Property.ValueChangeListener() {
                 public void valueChange(Property.ValueChangeEvent event) {
-                    double value = slider.getValue();
+                    double value = RSlider.getValue();
 
-                    imageResource.setValue(value);
+                    imageResource.setRAdjust((int) value);
+
                     // Use the value
                     image.markAsDirty();
                     resource.setFilename(getFilename());
                 }
             }
         );
-        layout.addComponent(slider);
+        GSlider.addValueChangeListener(
+            new Property.ValueChangeListener() {
+                public void valueChange(Property.ValueChangeEvent event) {
+                    double value = GSlider.getValue();
+
+                    imageResource.setGAdjust((int) value);
+
+                    // Use the value
+                    image.markAsDirty();
+                    resource.setFilename(getFilename());
+                }
+            }
+        );
+        BSlider.addValueChangeListener(
+            new Property.ValueChangeListener() {
+                public void valueChange(Property.ValueChangeEvent event) {
+                    double value = BSlider.getValue();
+
+                    imageResource.setBAdjust((int) value);
+
+                    // Use the value
+                    image.markAsDirty();
+                    resource.setFilename(getFilename());
+                }
+            }
+        );
+
+        layout.addComponent(RSlider);
+        RSlider.setSizeFull();
+        layout.addComponent(GSlider);
+        GSlider.setSizeFull();
+        layout.addComponent(BSlider);
+        BSlider.setSizeFull();
+
+        layout.addComponent(image);
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
