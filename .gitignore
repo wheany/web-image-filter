@@ -5,3 +5,4 @@ hs_err_pid*
 target
 
 src/main/webapp/VAADIN/themes/mytheme/styles.scss.cache
+*.iml
