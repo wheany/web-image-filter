@@ -15,6 +15,16 @@ public class ImageResource
     ByteArrayOutputStream imagebuffer = null;
     int reloads = 0;
 
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
+
+    private double value = 0;
+
     /* We need to implement this method that returns
      * the resource as a stream. */
     public InputStream getStream () {
@@ -30,6 +40,7 @@ public class ImageResource
         drawable.drawRect(0,0,199,199);
         drawable.setColor(Color.black);
         drawable.drawString("Reloads="+reloads, 75, 100);
+        drawable.drawString("Value="+value, 75, 125);
         reloads++;
 
         try {

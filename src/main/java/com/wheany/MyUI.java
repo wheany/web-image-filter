@@ -5,6 +5,7 @@ import javax.servlet.annotation.WebServlet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
+import com.vaadin.data.Property;
 import com.vaadin.server.*;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
@@ -30,8 +31,9 @@ public class MyUI extends UI {
         setContent(layout);
 
         // Create an instance of our stream source.
-        final StreamResource.StreamSource imagesource = new ImageResource();
-        final StreamResource resource = new StreamResource(imagesource, getFilename());
+        final ImageResource imageResource = new ImageResource();
+
+        final StreamResource resource = new StreamResource(imageResource, getFilename());
         final Image image = new Image("Dynamic image", resource);
         layout.addComponent(image);
 
@@ -44,6 +46,21 @@ public class MyUI extends UI {
             }
         });
         layout.addComponent(button);
+
+        final Slider slider = new Slider(1, 100);
+        slider.addValueChangeListener(
+            new Property.ValueChangeListener() {
+                public void valueChange(Property.ValueChangeEvent event) {
+                    double value = slider.getValue();
+
+                    imageResource.setValue(value);
+                    // Use the value
+                    image.markAsDirty();
+                    resource.setFilename(getFilename());
+                }
+            }
+        );
+        layout.addComponent(slider);
 
         // Find the application directory
         String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
